@@ -18,6 +18,8 @@ On macOS `F11` is usually taken by the system ("Show Desktop"), so use
 | ----------------------------- | ---------------------------------------------------- |
 | `src/main.c`                  | The application: window, input, shaders, render loop |
 | `CMakeLists.txt`              | Build description for all platforms                  |
+| `CMakePresets.json`           | Debug and Release build setups for CMake and editors |
+| `.vscode/extensions.json`     | VS Code extensions recommended for this project      |
 | `third_party/glad/`           | OpenGL function loader (generated, checked in)       |
 | `.github/workflows/build.yml` | Builds every push on Windows, Linux and macOS        |
 
@@ -29,8 +31,15 @@ and built automatically the first time CMake configures the project.
 All platforms need [CMake](https://cmake.org/download/) 3.21 or newer, Git, and
 a C compiler.
 
-- **Windows:** Visual Studio 2022 with the "Desktop development with C++"
-  workload (it includes the C compiler and CMake).
+- **Windows:** one of these, each with the "Desktop development with C++"
+  workload selected in the installer:
+  - **Visual Studio 2026**, if you want the full IDE.
+  - **Build Tools for Visual Studio 2026**, if you only want the compiler and
+    will use VS Code as the editor.
+
+  Both come with a CMake that knows Visual Studio 2026. If you install CMake
+  separately instead, use version 4.2 or newer; older versions cannot find
+  Visual Studio 2026.
 - **macOS:** Xcode command line tools (`xcode-select --install`), and CMake,
   for example via `brew install cmake`.
 - **Linux:** a compiler plus the X11 and Wayland development packages.
@@ -41,23 +50,49 @@ a C compiler.
 
 ## Build and run
 
-The commands are the same everywhere:
+In every editor, open the **repository folder itself** (the one containing
+`CMakeLists.txt`). The `build/` folder is generated output: never open it as a
+project and never edit anything in it. You can delete it at any time to start a
+clean build.
+
+### Visual Studio Code (Windows, Linux, macOS)
+
+1. Install [VS Code](https://code.visualstudio.com/).
+2. *File > Open Folder…* and select the repository folder. VS Code offers to
+   install the recommended extensions, **C/C++** and **CMake Tools**; accept.
+3. CMake Tools finds `CMakePresets.json` and asks for a configure preset.
+   Choose **Debug**. (Later you can switch between Debug and Release in the
+   CMake panel in the sidebar.)
+4. Build with `F7`. To start the program, use the buttons in the status bar
+   at the bottom: the bug icon runs it in the debugger (so breakpoints work),
+   the triangle runs it without the debugger.
+
+If CMake Tools reports that it cannot find a compiler on Windows, close VS
+Code, open the **Developer Command Prompt for VS 2026** from the Start menu,
+and start VS Code from there with `code .` inside the repository folder.
+
+### Visual Studio 2026 (Windows)
+
+*File > Open > Folder…* and select the repository folder. Visual Studio reads
+`CMakePresets.json`; choose the Debug or Release preset in the toolbar, then
+press `F5`.
+
+### Command line
 
 ```sh
-cmake -S . -B build
-cmake --build build
+cmake --preset debug
+cmake --build --preset debug
 ```
 
 Then start the program:
 
-- Linux / macOS: `./build/app3d`
-- Windows: `build\Debug\app3d.exe`
+- Linux / macOS: `./build/debug/app3d`
+- Windows: `build\debug\Debug\app3d.exe`
 
-On Windows you can also open the folder directly in Visual Studio
-(*File > Open > Folder*), or open the generated `build/app3d.sln`.
+For an optimised build, replace `debug` with `release` in all of the above.
 
-For an optimised build, use `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release` on
-Linux and macOS, and `cmake --build build --config Release` on Windows.
+On Windows, run these commands in the **Developer Command Prompt for VS 2026**
+so that CMake can find the compiler.
 
 ## Notes
 

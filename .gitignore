@@ -1,8 +1,11 @@
 build/
 out/
 .vs/
-.vscode/
 .idea/
 CMakeUserPresets.json
 compile_commands.json
 .DS_Store
+
+# Share the recommended VS Code extensions, keep personal editor settings local.
+.vscode/*
+!.vscode/extensions.json
