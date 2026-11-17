@@ -37,9 +37,15 @@ a C compiler.
   - **Build Tools for Visual Studio 2026**, if you only want the compiler and
     will use VS Code as the editor.
 
-  Both come with a CMake that knows Visual Studio 2026. If you install CMake
-  separately instead, use version 4.2 or newer; older versions cannot find
-  Visual Studio 2026.
+  Both include a copy of CMake, but neither puts it on the `PATH`, so `cmake`
+  does not work in an ordinary terminal. The simplest fix is to install the
+  official CMake as well, which adds itself to the `PATH`:
+
+  ```
+  winget install -e --id Kitware.CMake
+  ```
+
+  Use CMake 4.2 or newer; older versions cannot find Visual Studio 2026.
 - **macOS:** Xcode command line tools (`xcode-select --install`), and CMake,
   for example via `brew install cmake`.
 - **Linux:** a compiler plus the X11 and Wayland development packages.
@@ -91,8 +97,9 @@ Then start the program:
 
 For an optimised build, replace `debug` with `release` in all of the above.
 
-On Windows, run these commands in the **Developer Command Prompt for VS 2026**
-so that CMake can find the compiler.
+On Windows this works in any terminal once `cmake` is on the `PATH` (see
+Prerequisites). The presets use CMake's Visual Studio generator, which finds
+the compiler by itself, so the Developer Command Prompt is not needed.
 
 ## Notes
 
